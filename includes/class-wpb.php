@@ -156,9 +156,12 @@ class Wpb {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		
+
 		// action hook for custom post type "Book"
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_post_type_book' );
+
+		// action hook for custom hierarchical taxonomy Book Category
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_category_book' );
 	}
 
 	/**
