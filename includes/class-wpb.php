@@ -162,6 +162,9 @@ class Wpb {
 
 		// action hook for custom hierarchical taxonomy Book Category
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_category_book' );
+		
+		// action hook for custom non-hierarchical taxonomy Book Tag
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_tag_book' );
 	}
 
 	/**

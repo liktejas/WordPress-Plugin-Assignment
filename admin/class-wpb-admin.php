@@ -166,7 +166,7 @@ class Wpb_Admin {
 			'add_new_item'               => __( 'Add New Book Category', 'text_domain' ),
 			'edit_item'                  => __( 'Edit Book Category', 'text_domain' ),
 			'update_item'                => __( 'Update Book Category', 'text_domain' ),
-			'view_item'                  => __( 'View Book Caegory', 'text_domain' ),
+			'view_item'                  => __( 'View Book Category', 'text_domain' ),
 			'separate_items_with_commas' => __( 'Separate items with commas', 'text_domain' ),
 			'add_or_remove_items'        => __( 'Add or remove items', 'text_domain' ),
 			'choose_from_most_used'      => __( 'Choose from the most used', 'text_domain' ),
@@ -189,6 +189,46 @@ class Wpb_Admin {
 		);
 		
 		register_taxonomy( 'Book Category', array( 'post' ), $args );
+	}
+
+
+	// Register Custom Non-Hierarchical Taxonomy Book Tag
+	function custom_tag_book() {
+
+		$labels = array(
+			'name'                       => _x( 'Book Tags', 'Taxonomy General Name', 'text_domain' ),
+			'singular_name'              => _x( 'Book Tag', 'Taxonomy Singular Name', 'text_domain' ),
+			'menu_name'                  => __( 'Book Tag', 'text_domain' ),
+			'all_items'                  => __( 'All Book Tags', 'text_domain' ),
+			'parent_item'                => __( 'Parent Item', 'text_domain' ),
+			'parent_item_colon'          => __( 'Parent Item:', 'text_domain' ),
+			'new_item_name'              => __( 'Add Book Tag', 'text_domain' ),
+			'add_new_item'               => __( 'Add New Book Tag', 'text_domain' ),
+			'edit_item'                  => __( 'Edit Book Tag', 'text_domain' ),
+			'update_item'                => __( 'Update Book Tag', 'text_domain' ),
+			'view_item'                  => __( 'View Book Tag', 'text_domain' ),
+			'separate_items_with_commas' => __( 'Separate items with commas', 'text_domain' ),
+			'add_or_remove_items'        => __( 'Add or remove items', 'text_domain' ),
+			'choose_from_most_used'      => __( 'Choose from the most used', 'text_domain' ),
+			'popular_items'              => __( 'Popular Items', 'text_domain' ),
+			'search_items'               => __( 'Search Book Tag', 'text_domain' ),
+			'not_found'                  => __( 'Not Book Tag Found', 'text_domain' ),
+			'no_terms'                   => __( 'No items', 'text_domain' ),
+			'items_list'                 => __( 'Items list', 'text_domain' ),
+			'items_list_navigation'      => __( 'Items list navigation', 'text_domain' ),
+		);
+		
+		$args = array(
+			'labels'                     => $labels,
+			'hierarchical'               => false,
+			'public'                     => true,
+			'show_ui'                    => true,
+			'show_admin_column'          => true,
+			'show_in_nav_menus'          => true,
+			'show_tagcloud'              => true,
+		);
+
+		register_taxonomy( 'Book Tag', array( 'post' ), $args );
 	}
 
 }
