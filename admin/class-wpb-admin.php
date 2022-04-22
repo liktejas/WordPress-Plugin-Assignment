@@ -231,4 +231,42 @@ class Wpb_Admin {
 		register_taxonomy( 'Book Tag', array( 'post' ), $args );
 	}
 
+	public function custom_metabox_books() {
+		// for page, post and custom post type
+		add_meta_box('custom-books-info', 'Books Info', array( $this, "custom_books_info_function" ), array( 'page', 'post', 'Book' ) );
+	}
+
+	public function custom_books_info_function() {
+		wp_nonce_field( basename( __FILE__ ), 'custom_books_info_nonce' );
+		?>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th scope="row"><label for="wpb-custom-author-name">Author Name</label></th>
+					<td><input name="wpb-custom-author-name" type="text" id="wpb-custom-author-name" placeholder="Author Name" class="regular-text"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-price">Book Price</label></th>
+					<td><input name="wpb-custom-price" type="text" id="wpb-custom-price" placeholder="Book Price" class="regular-text"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-publisher">Publisher</label></th>
+					<td><input name="wpb-custom-publisher" type="text" id="wpb-custom-publisher" placeholder="Publisher" class="regular-text"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-year">Year</label></th>
+					<td><input name="wpb-custom-year" type="number" id="wpb-custom-year" placeholder="Year" class="regular-text"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-edition">Edition</label></th>
+					<td><input name="wpb-custom-edition" type="text" id="wpb-custom-edition" placeholder="Edition" class="regular-text"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="wpb-custom-url">URL</label></th>
+					<td><input name="wpb-custom-url" type="url" id="wpb-custom-url" placeholder="URL eg. https://example.com" class="regular-text"></td>
+				</tr>
+			</tbody>
+		</table>
+		<?php
+	}
 }
