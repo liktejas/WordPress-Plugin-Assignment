@@ -100,4 +100,57 @@ class Wpb_Admin {
 
 	}
 
+	// create menu method
+	public function book_menu() {
+		add_menu_page( "Booksmenu", "Booksmenu", "manage_options", "books-menu", array( $this, "book_dashboard" ), 'dashicons-book-alt', 76 );
+		add_submenu_page( "books-menu", "Settings", "Settings", "manage_options", "books-menu-settings", array( $this, "book_settings" ) );
+	}
+
+	// "Booksmenu" menu callback function
+	public function book_dashboard() {
+		echo "<h3>Welcome to Books Menu</h3>";
+	}
+
+	// "Settings" sub-menu callback function
+	public function book_settings() {
+		echo "<h3>Welcome to Book Setting Page</h3>";
+	}
+
+	// create custom post type "book"
+	public function custom_post_type_book() {
+
+		$labels = array(
+			'name' 					=> 'Book',
+			'singular_name' 		=> 'Book',
+			'add_new' 				=> 'Add Book',
+			'add_new_item' 			=> 'Add New Book',
+			'edit_item' 			=> 'Edit Book',
+			'new_item' 				=> 'New Book',
+			'all_items' 			=> 'All Books',
+			'view_item' 			=> 'View Book',
+			'search_items' 			=> 'Search Books',
+			'not_found' 			=> 'No Books Found',
+			'not_found_in_trash' 	=> 'No Books Found in Trash',
+			'menu_name' 			=> 'Book',
+		);
+
+		$args = array(
+			'labels' 			=> $labels,
+			'public' 			=> true,
+			'publicly_querable' => true,
+			'show_ui' 			=> true,
+			'show_in_menu' 		=> true,
+			'query_var' 		=> true,
+			'rewrite' 			=> array( 'slug' => 'book' ),
+			'capability_type' 	=> 'post',
+			'has_archive' 		=> true,
+			'hieracrchical' 	=> false,
+			'menu_position' 	=> null,
+			'supports' 			=> array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments'),
+		);
+
+		register_post_type('Book', $args);
+	}
+
+
 }
