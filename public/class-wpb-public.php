@@ -100,4 +100,46 @@ class Wpb_Public {
 
 	}
 
+	/**
+	 * Returns the information of book to shortcode named book.
+	 *
+	 * @since    1.0.0
+	 * @param      array    $atts       Contains the attributes passed in shortcode
+	 */
+	public function load_book_content( $atts ) {
+		// print_r($atts);
+		global $wpdb;
+		$id = esc_html( $atts['id'] );
+		$data = $wpdb->get_row( "SELECT wp_bookmeta.author_name, wp_bookmeta.price, wp_bookmeta.publisher, wp_bookmeta.year, wp_bookmeta.edition, wp_bookmeta.url, wp_posts.post_title, wp_posts.post_content FROM wp_bookmeta INNER JOIN wp_posts ON wp_posts.ID = wp_bookmeta.post_id WHERE wp_posts.ID = $id", 'ARRAY_A' );
+		if ( $wpdb->num_rows > 0 ) {
+			// print_r();
+			// exit();
+			ob_start();
+			?>
+			<div>
+				<h3 style="text-align:center"><?php echo esc_html( $data['post_title'] ) ?></h3>
+				<p style="text-align:justify"><?php echo esc_html( $data['post_content'] ) ?></p>
+				<table>
+					<tbody>
+						<tr>
+							<td><p>Price: &#8377; <?php echo esc_html( $data['price'] ) ?></p></td>
+							<td><p>Publisher: <?php echo esc_html( $data['publisher'] ) ?></p></td>
+						</tr>
+						<tr>
+							<td><p>Year: <?php echo esc_html( $data['year'] ) ?></p></td>
+							<td><p>Edition: <?php echo esc_html( $data['edition'] ) ?></p></td>
+						</tr>
+						<tr>
+							<td colspan="2"><p style="text-align:center">For more information: <a href="<?php echo esc_attr( $data['url'] ) ?>" target="_blank"><?php echo esc_attr( $data['url'] ) ?></p></td>
+						</tr>	
+					</tbody>
+				</table>
+			</div>
+			<?php
+			$contents = ob_get_contents();
+			ob_get_clean();
+			return $contents;
+		}
+	}
+
 }
