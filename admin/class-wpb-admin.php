@@ -131,7 +131,7 @@ class Wpb_Admin {
 			'hieracrchical' 		=> false,
 			'menu_position' 		=> null,
 			'supports' 				=> array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments'),
-			'taxonomies'            => array( 'category', 'post_tag', 'Book Category', 'Book Tag' ),
+			'taxonomies'            => array( 'Book Category', 'Book Tag' ),
 		);
 
 		register_post_type('Book', $args);
@@ -216,6 +216,13 @@ class Wpb_Admin {
 		register_taxonomy( 'Book Tag', array( 'post' ), $args );
 	}
 
+	// Registers the custom table named bookmeta
+	function pw_register_bookmeta_table() {
+		global $wpdb;	
+		$wpdb->bookmeta = $wpdb->prefix . 'bookmeta';
+	}
+
+	// Creates custom meta box
 	public function custom_metabox_books() {
 		add_meta_box('custom-books-info', 'Books Info', array( $this, "custom_books_info_function" ), array( 'book' ) );
 	}
@@ -227,23 +234,21 @@ class Wpb_Admin {
 	 * @param      object    $post       Contains all information about post
 	 */
 	public function custom_books_info_function($post) {
-		global $wpdb;
-		$wpdb->get_var( "SELECT EXISTS ( SELECT * FROM `wp_bookmeta` WHERE post_id = $post->ID )" );
-		$get_book_metadata = $wpdb->get_row( "SELECT * FROM `wp_bookmeta` WHERE post_id = $post->ID" , 'ARRAY_A' );
-		if( $wpdb->num_rows > 0 ) {
-			$author = $get_book_metadata['author_name'];
-			$price = $get_book_metadata['price'];
-			$publisher = $get_book_metadata['publisher'];
-			$year = $get_book_metadata['year'];
-			$edition = $get_book_metadata['edition'];
-			$url = $get_book_metadata['url'];
+		$get_book_metadata = get_metadata( 'book', $post->ID );
+		if( count( $get_book_metadata ) > 0 ) {
+			$author 	= $get_book_metadata['author_name'][0];
+			$price 		= $get_book_metadata['price'][0];
+			$publisher 	= $get_book_metadata['publisher'][0];
+			$year 		= $get_book_metadata['year'][0];
+			$edition 	= $get_book_metadata['edition'][0];
+			$url 		= $get_book_metadata['url'][0];
 		} else {
-			$author = '';
-			$price = '';
-			$publisher = '';
-			$year = '';
-			$edition = '';
-			$url = '';
+			$author 	= '';
+			$price 		= '';
+			$publisher 	= '';
+			$year 		= '';
+			$edition 	= '';
+			$url 		= '';	
 		}
 		wp_nonce_field( basename( __FILE__ ), 'custom_books_info_nonce' );
 		?>
@@ -297,11 +302,11 @@ class Wpb_Admin {
 			return;
 		}
 
-		$pub_name = '';
+		$author = '';
 		if ( isset( $_POST['wpb-custom-author-name'] ) ) {
-			$pub_name = sanitize_text_field( $_POST['wpb-custom-author-name'] );
+			$author = sanitize_text_field( $_POST['wpb-custom-author-name'] );
 		} else {
-			$pub_name = "";
+			$author = "";
 		}
 
 		$price = '';
@@ -338,27 +343,14 @@ class Wpb_Admin {
 		} else {
 			$url = "";
 		}
-		
-		global $wpdb;
-		
-		$table = $wpdb->prefix.'bookmeta';
-		$data = array(
-			'post_id' => $post_id,
-			'author_name' => $pub_name,
-			'price' => $price,
-			'publisher' => $publisher,
-			'year' => $year,
-			'edition' => $edition,
-			'url' => $url,
-		);
-		
-		$format = array('%d', '%s', '%s', '%s', '%d', '%s', '%s');
-		$check_post_id = $wpdb->get_var("SELECT EXISTS ( SELECT * FROM $table WHERE post_id = $post_id)");
-		if ( $check_post_id ) {
-			$wpdb->update( $table, $data, array( 'post_id' => $post_id ), $format );
-		} else {
-			$wpdb->insert( $table, $data, $format );
-		}
+
+		update_metadata( 'book', $post_id, 'author_name', $author );
+		update_metadata( 'book', $post_id, 'price', $price );
+		update_metadata( 'book', $post_id, 'publisher', $publisher );
+		update_metadata( 'book', $post_id, 'year', $year );
+		update_metadata( 'book', $post_id, 'edition', $edition );
+		update_metadata( 'book', $post_id, 'url', $url );
+
 	}
 
 	// create menu method
@@ -393,5 +385,24 @@ class Wpb_Admin {
 		<?php
 		echo ob_get_clean();
 	}
+
+	/**
+	 * Include post type Book as post to show Book posts in post archive.
+	 *
+	 * @since    1.0.0
+	 * @param      WP_Query Object    $query       The name of the plugin.
+	 */
+	public function namespace_add_custom_types( $query ) {
+		// print_r($query);
+		// exit();
+		if( (is_category() || is_tag()) && $query->is_archive() && empty( $query->query_vars['suppress_filters'] ) ) {
+		  $query->set( 'post_type', array(
+		   'post', 'Book'
+			) );
+		}
+	}
+
+	
+
 
 }

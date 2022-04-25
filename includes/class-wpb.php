@@ -166,6 +166,8 @@ class Wpb {
 		// action hook for custom non-hierarchical taxonomy Book Tag
 		$this->loader->add_action( 'init', $plugin_admin, 'custom_tag_book' );
 
+		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'pw_register_bookmeta_table' );
+
 		// action hook for custom metabox
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'custom_metabox_books' );
 
@@ -174,6 +176,8 @@ class Wpb {
 
 		// action hook for admin_menu
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'book_menu' );
+
+		$this->loader->add_action( 'pre_get_posts', $plugin_admin, 'namespace_add_custom_types' );
 	}
 
 	/**

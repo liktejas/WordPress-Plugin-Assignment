@@ -34,19 +34,15 @@ class Wpb_Activator {
 		if( $wpdb->get_var("SHOW tables like '". $this->wpb_bookmeta(). "'" ) != $this->wpb_bookmeta() ) {
 
 			// dynamic generate table
-			$table_query = "CREATE TABLE `". $this->wpb_bookmeta() ."` (
-								`id` bigint(20) NOT NULL AUTO_INCREMENT,
-								`post_id` bigint(20) NOT NULL,
-								`author_name` varchar(100) DEFAULT NULL,
-								`price` int(11) DEFAULT NULL,
-								`publisher` varchar(200) DEFAULT NULL,
-								`year` int(11) DEFAULT NULL,
-								`edition` varchar(100) DEFAULT NULL,
-								`url` varchar(200) DEFAULT NULL,
-								PRIMARY KEY (`id`),
-								UNIQUE KEY (`post_id`)
-							) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-	
+			$table_query = "CREATE TABLE `". $this->wpb_bookmeta() ."` (  
+				`meta_id` bigint(20) NOT NULL AUTO_INCREMENT,  
+				`book_id` bigint(20) NOT NULL DEFAULT '0',  
+				`meta_key` varchar(255) DEFAULT NULL,  
+				`meta_value` longtext,  
+				PRIMARY KEY (`meta_id`),  
+				KEY `book_id` (`book_id`),  
+				KEY `meta_key` (`meta_key`)) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
 			require_once ( ABSPATH.'wp-admin/includes/upgrade.php' );
 			dbDelta($table_query);
 		}
@@ -56,5 +52,8 @@ class Wpb_Activator {
 		global $wpdb;
 		return $wpdb->prefix . "bookmeta";
 	}
+
+	
+
 
 }
