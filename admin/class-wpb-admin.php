@@ -390,19 +390,15 @@ class Wpb_Admin {
 	 * Include post type Book as post to show Book posts in post archive.
 	 *
 	 * @since    1.0.0
-	 * @param      WP_Query Object    $query       The name of the plugin.
+	 * @param      WP_Query Object    $query	Contains all information about post and stuff
 	 */
 	public function namespace_add_custom_types( $query ) {
-		// print_r($query);
-		// exit();
+
 		if( (is_category() || is_tag()) && $query->is_archive() && empty( $query->query_vars['suppress_filters'] ) ) {
 		  $query->set( 'post_type', array(
 		   'post', 'Book'
 			) );
 		}
 	}
-
-	
-
 
 }

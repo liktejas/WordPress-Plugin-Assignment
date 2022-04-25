@@ -107,30 +107,28 @@ class Wpb_Public {
 	 * @param      array    $atts       Contains the attributes passed in shortcode
 	 */
 	public function load_book_content( $atts ) {
-		// print_r($atts);
 		global $wpdb;
 		$id = esc_html( $atts['id'] );
-		$data = $wpdb->get_row( "SELECT wp_bookmeta.author_name, wp_bookmeta.price, wp_bookmeta.publisher, wp_bookmeta.year, wp_bookmeta.edition, wp_bookmeta.url, wp_posts.post_title, wp_posts.post_content FROM wp_bookmeta INNER JOIN wp_posts ON wp_posts.ID = wp_bookmeta.post_id WHERE wp_posts.ID = $id", 'ARRAY_A' );
-		if ( $wpdb->num_rows > 0 ) {
-			// print_r();
-			// exit();
+		$get_book_metadata = get_metadata( 'book', $atts['id'] );
+		$get_post_metadata = $wpdb->get_row( "SELECT post_title, post_content FROM wp_posts WHERE ID = $id", 'ARRAY_A' );
+		if ( $wpdb->num_rows > 0 && count( $get_book_metadata ) > 0 ) {
 			ob_start();
 			?>
 			<div>
-				<h3 style="text-align:center"><?php echo esc_html( $data['post_title'] ) ?></h3>
-				<p style="text-align:justify"><?php echo esc_html( $data['post_content'] ) ?></p>
+				<h3 style="text-align:center"><?php echo $get_post_metadata['post_title'] ?></h3>
+				<p style="text-align:justify"><?php echo $get_post_metadata['post_content'] ?></p>
 				<table>
 					<tbody>
 						<tr>
-							<td><p>Price: &#8377; <?php echo esc_html( $data['price'] ) ?></p></td>
-							<td><p>Publisher: <?php echo esc_html( $data['publisher'] ) ?></p></td>
+							<td><p>Price: &#8377; <?php echo esc_html( $get_book_metadata['price'][0] ) ?></p></td>
+							<td><p>Publisher: <?php echo esc_html( $get_book_metadata['publisher'][0] ) ?></p></td>
 						</tr>
 						<tr>
-							<td><p>Year: <?php echo esc_html( $data['year'] ) ?></p></td>
-							<td><p>Edition: <?php echo esc_html( $data['edition'] ) ?></p></td>
+							<td><p>Year: <?php echo esc_html( $get_book_metadata['year'][0] ) ?></p></td>
+							<td><p>Edition: <?php echo esc_html( $get_book_metadata['edition'][0] ) ?></p></td>
 						</tr>
 						<tr>
-							<td colspan="2"><p style="text-align:center">For more information: <a href="<?php echo esc_attr( $data['url'] ) ?>" target="_blank"><?php echo esc_attr( $data['url'] ) ?></p></td>
+							<td colspan="2"><p style="text-align:center">For more information: <a href="<?php echo esc_attr( $get_book_metadata['url'][0] ) ?>" target="_blank"><?php echo esc_attr( $get_book_metadata['url'][0] ) ?></p></td>
 						</tr>	
 					</tbody>
 				</table>
