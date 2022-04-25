@@ -180,6 +180,9 @@ class Wpb {
 
 		// action hook to include post type Book as post to show Book posts in post archive.
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin, 'namespace_add_custom_types' );
+
+		// action hook to display widget on dashboard as top 5 categories of book post type based on their count
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'custom_dashboard_widgets' );
 	}
 
 	/**
