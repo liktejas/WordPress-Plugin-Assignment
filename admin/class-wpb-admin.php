@@ -100,22 +100,6 @@ class Wpb_Admin {
 
 	}
 
-	// create menu method
-	public function book_menu() {
-		add_menu_page( "Booksmenu", "Booksmenu", "manage_options", "books-menu", array( $this, "book_dashboard" ), 'dashicons-book-alt', 76 );
-		add_submenu_page( "books-menu", "Settings", "Settings", "manage_options", "books-menu-settings", array( $this, "book_settings" ) );
-	}
-
-	// "Booksmenu" menu callback function
-	public function book_dashboard() {
-		echo "<h3>Welcome to Books Menu</h3>";
-	}
-
-	// "Settings" sub-menu callback function
-	public function book_settings() {
-		echo "<h3>Welcome to Book Setting Page</h3>";
-	}
-
 	// create custom post type "book"
 	public function custom_post_type_book() {
 
@@ -147,6 +131,7 @@ class Wpb_Admin {
 			'hieracrchical' 		=> false,
 			'menu_position' 		=> null,
 			'supports' 				=> array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments'),
+			'taxonomies'            => array( 'category', 'post_tag', 'Book Category', 'Book Tag' ),
 		);
 
 		register_post_type('Book', $args);
@@ -374,6 +359,39 @@ class Wpb_Admin {
 		} else {
 			$wpdb->insert( $table, $data, $format );
 		}
+	}
+
+	// create menu method
+	public function book_menu() {
+		add_menu_page( "Booksmenu", "Booksmenu", "manage_options", "books-menu", array( $this, "book_dashboard" ), 'dashicons-book-alt', 76 );
+	}
+
+	// "Booksmenu" menu callback function
+	public function book_dashboard() {
+		ob_start();
+		?>
+		<div class="wrap">
+			<h2>Book Settings</h2>
+			<p>Manages all the settings of book plugin</p>
+
+			<table class="form-table">
+				<tbody>
+					<tr>
+						<th scope="row"><label for="currency">Currency</label></th>
+						<td><input type="text" class="regular-text" name="currency" id="currency" placeholder="Currency"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="no_of_books">No. of Books (per page)</label></th>
+						<td><input type="text" class="regular-text" name="no_of_books" id="no_of_books" placeholder="No. of Books"></td>
+					</tr>
+					<tr>
+						<td><button class="button-primary">Save Settings</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<?php
+		echo ob_get_clean();
 	}
 
 }

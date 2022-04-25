@@ -171,6 +171,9 @@ class Wpb {
 
 		// action hook to store metadata of custom metabox book
 		$this->loader->add_action( 'save_post', $plugin_admin, 'save_custom_metabox_data', 10, 2 );
+
+		// action hook for admin_menu
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'book_menu' );
 	}
 
 	/**
