@@ -131,7 +131,7 @@ class Wpb_Admin {
 			'hieracrchical' 		=> false,
 			'menu_position' 		=> null,
 			'supports' 				=> array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments'),
-			'taxonomies'            => array( 'Book Category', 'Book Tag' ),
+			'taxonomies'            => array( 'category', 'post_tag' ),
 		);
 
 		register_post_type('Book', $args);
@@ -173,7 +173,7 @@ class Wpb_Admin {
 			'show_tagcloud'              => true,
 		);
 		
-		register_taxonomy( 'Book Category', array( 'post' ), $args );
+		register_taxonomy( 'Book Category', array( 'post', 'book' ), $args );
 	}
 
 
@@ -213,7 +213,7 @@ class Wpb_Admin {
 			'show_tagcloud'              => true,
 		);
 
-		register_taxonomy( 'Book Tag', array( 'post' ), $args );
+		register_taxonomy( 'Book Tag', array( 'post', 'book' ), $args );
 	}
 
 	// Registers the custom table named bookmeta
