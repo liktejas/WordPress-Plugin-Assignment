@@ -122,6 +122,8 @@ class Wpb {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wpb-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'widgets/wp_book_cust_widget.php';
+
 		$this->loader = new Wpb_Loader();
 
 	}
@@ -201,6 +203,8 @@ class Wpb {
 
 		// Create Shortcode named book to show information about book
 		add_shortcode( "book", array( $plugin_public, 'load_book_content') );
+
+		add_action('widgets_init', 'wp_book_widget_init');
 	}
 
 	/**
