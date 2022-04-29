@@ -107,8 +107,8 @@ class Wpb_Public {
 	 * @param      array    $atts       Contains the attributes passed in shortcode
 	 */
 	public function load_book_content( $atts ) {
-		
-		 $attributes = shortcode_atts(
+
+		$attributes = shortcode_atts(
 			array(
 				'id'          => 0,
 				'author_name' => '',
@@ -116,7 +116,7 @@ class Wpb_Public {
 				'year'        => '',
 				'tag'         => '',
 				'category'    => '',
-				'editon'      => '',
+				'edition'     => '',
 				'url'    	  => '',
 			),
 			$atts
@@ -124,7 +124,7 @@ class Wpb_Public {
 
 		if ($attributes['category'] != "" || $attributes["tag"] != "") {
 			$args = [
-				'ID'              => $attributes['id'],
+				'p'              => $attributes['id'],
 				'post_type'      => 'book',
 				'post_status'    => 'publish',
 				'posts_per_page' => get_option('book_no_pages'),
@@ -148,6 +148,7 @@ class Wpb_Public {
 			];
 		} else if ($attributes['author_name'] != "" || $attributes["publisher"] != "" || $attributes["year"] != "" || $attributes["edition"] != "" || $attributes["url"] != "") {
 			$args = [
+				'p'				=> $attributes['id'],
 				'post_type'      => 'book',
 				'post_status'    => 'publish',
 				'posts_per_page' => get_option('book_no_pages'),
@@ -182,7 +183,7 @@ class Wpb_Public {
 			];
 		} else {
 			$args = array(
-				'ID'              => $attributes['id'],
+				'p'              => $attributes['id'],
 				'post_type'      => 'book',
 				'post_status'    => 'publish',
 				'posts_per_page' => get_option('book_no_pages'),
@@ -236,7 +237,7 @@ class Wpb_Public {
 				$content .= "</div>";
 			}
 		} else {
-			$content .= "<p>No Book Found....</p>";
+			$content .= '<p style="color:red; text-align:center">No Book Found....</p>';
 		}
 
 		return $content;
