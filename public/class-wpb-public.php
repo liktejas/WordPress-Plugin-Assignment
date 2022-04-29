@@ -107,37 +107,104 @@ class Wpb_Public {
 	 * @param      array    $atts       Contains the attributes passed in shortcode
 	 */
 	public function load_book_content( $atts ) {
-		global $wpdb;
-		$id = esc_html( $atts['id'] );
-		$get_book_metadata = get_metadata( 'book', $atts['id'] );
-		$get_post_metadata = $wpdb->get_row( "SELECT post_title, post_content FROM wp_posts WHERE ID = $id", 'ARRAY_A' );
-		if ( $wpdb->num_rows > 0 && count( $get_book_metadata ) > 0 ) {
-			ob_start();
-			?>
-			<div>
-				<h3 style="text-align:center"><?php echo $get_post_metadata['post_title'] ?></h3>
-				<p style="text-align:justify"><?php echo $get_post_metadata['post_content'] ?></p>
-				<table>
-					<tbody>
-						<tr>
-							<td><p>Price: &#8377; <?php echo esc_html( $get_book_metadata['price'][0] ) ?></p></td>
-							<td><p>Publisher: <?php echo esc_html( $get_book_metadata['publisher'][0] ) ?></p></td>
-						</tr>
-						<tr>
-							<td><p>Year: <?php echo esc_html( $get_book_metadata['year'][0] ) ?></p></td>
-							<td><p>Edition: <?php echo esc_html( $get_book_metadata['edition'][0] ) ?></p></td>
-						</tr>
-						<tr>
-							<td colspan="2"><p style="text-align:center">For more information: <a href="<?php echo esc_attr( $get_book_metadata['url'][0] ) ?>" target="_blank"><?php echo esc_attr( $get_book_metadata['url'][0] ) ?></p></td>
-						</tr>	
-					</tbody>
-				</table>
-			</div>
-			<?php
-			$contents = ob_get_contents();
-			ob_get_clean();
-			return $contents;
+		
+		 $attributes = shortcode_atts(
+			array(
+				'id'          => 0,
+				'author_name' => '',
+				'publisher'   => '',
+				'year'        => '',
+				'tag'         => '',
+				'category'    => '',
+				'editon'      => '',
+				'url'    	  => '',
+			),
+			$atts
+		);
+
+		if ($attributes['category'] != "" || $attributes["tag"] != "") {
+			$args = [
+				'ID'              => $attributes['id'],
+				'post_type'      => 'book',
+				'post_status'    => 'publish',
+				'tax_query'      => [
+					'relation' => 'OR',
+					[
+						'taxonomy'         => 'Book Category',
+						'field'            => 'slug',
+						'terms'            => explode(',', $attributes['category']),
+						'include_children' => true,
+						'operator'         => 'IN',
+					],
+					[
+						'taxonomy'         => 'Book Tag',
+						'field'            => 'slug',
+						'terms'            => explode(',', $attributes['tag']),
+						'include_children' => false,
+						'operator'         => 'IN',
+					],
+				],
+			];
+		} else if ($attributes['author_name'] != "" || $attributes["publisher"] != "" || $attributes["year"] != "" || $attributes["edition"] != "" || $attributes["url"] != "") {
+			$args = [
+				'post_type'      => 'book',
+				'post_status'    => 'publish',
+				'meta_query'     => array(
+					'relation' => 'OR',
+					[
+						'key'     => 'author_name',
+						'value'   => explode(',', $attributes['author_name']),
+						'compare' => 'IN',
+					],
+					[
+						'key'     => 'publisher',
+						'value'   => explode(',', $attributes['publisher']),
+						'compare' => 'IN',
+					],
+					[
+						'key'     => 'year',
+						'value'   => explode(',', $attributes['year']),
+						'compare' => 'IN',
+					],
+					[
+						'key'     => 'edition',
+						'value'   => explode(',', $attributes['edition']),
+						'compare' => 'IN',
+					],
+					[
+						'key'     => 'url',
+						'value'   => explode(',', $attributes['url']),
+						'compare' => 'IN',
+					],
+				),
+			];
+		} else {
+			$args = array(
+				'ID'              => $attributes['id'],
+				'post_type'      => 'book',
+				'post_status'    => 'publish',
+			);
 		}
+		$content = '';
+		$query = new WP_Query( $args );
+		if ( $query->have_posts() ) {
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				
+				$content .= '<article id="book-'.get_the_ID().'">';
+				$content .= '<center><h3>'.get_the_title().'</h3></center>';
+				$content .= '<p>'.get_the_content().'</p>';
+				$content .= '<p>Author :- '.get_metadata('book', get_the_ID(), 'author_name', true);
+				$content .= '<br> publisher :- '.get_metadata('book', get_the_ID(), 'publisher', true);
+				$content .= '<br> year :- '.get_metadata('book', get_the_ID(), 'year', true);
+				$content .= '<br> URL :- <a href='.get_metadata('book', get_the_ID(), 'url', true).'>'.get_metadata('book', get_the_ID(), 'url', true).'</a>';
+				$content .= '</article>';
+			}
+		} else {
+			$content .= "<p>No Book Found....</p>";
+		}
+
+		return $content;
 	}
 
 }
