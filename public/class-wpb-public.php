@@ -127,6 +127,7 @@ class Wpb_Public {
 				'ID'              => $attributes['id'],
 				'post_type'      => 'book',
 				'post_status'    => 'publish',
+				'posts_per_page' => get_option('book_no_pages'),
 				'tax_query'      => [
 					'relation' => 'OR',
 					[
@@ -149,6 +150,7 @@ class Wpb_Public {
 			$args = [
 				'post_type'      => 'book',
 				'post_status'    => 'publish',
+				'posts_per_page' => get_option('book_no_pages'),
 				'meta_query'     => array(
 					'relation' => 'OR',
 					[
@@ -183,22 +185,55 @@ class Wpb_Public {
 				'ID'              => $attributes['id'],
 				'post_type'      => 'book',
 				'post_status'    => 'publish',
+				'posts_per_page' => get_option('book_no_pages'),
 			);
 		}
+		
 		$content = '';
+
 		$query = new WP_Query( $args );
 		if ( $query->have_posts() ) {
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				
-				$content .= '<article id="book-'.get_the_ID().'">';
-				$content .= '<center><h3>'.get_the_title().'</h3></center>';
-				$content .= '<p>'.get_the_content().'</p>';
-				$content .= '<p>Author :- '.get_metadata('book', get_the_ID(), 'author_name', true);
-				$content .= '<br> publisher :- '.get_metadata('book', get_the_ID(), 'publisher', true);
-				$content .= '<br> year :- '.get_metadata('book', get_the_ID(), 'year', true);
-				$content .= '<br> URL :- <a href='.get_metadata('book', get_the_ID(), 'url', true).'>'.get_metadata('book', get_the_ID(), 'url', true).'</a>';
-				$content .= '</article>';
+				$currency = get_option( 'book_currency' );
+				$book_metadata = get_metadata( 'book', get_the_ID() );
+				$currency_in_no = get_metadata( 'book', get_the_ID(), 'price', true );
+				if( $book_metadata['publisher'][0] == '' || $currency_in_no == '' || $book_metadata['year'][0] == '' || $book_metadata['edition'][0] == '' || $book_metadata['url'][0] == '') {
+					$book_metadata['publisher'][0] = 'N.A.';
+					$price = "N.A.";
+					$book_metadata['year'][0] = 'N.A.';
+					$book_metadata['edition'][0] = 'N.A.';
+					$book_metadata['url'][0] = '';
+				} else {
+					if($currency == 'US Dollar') {
+						$price = '$' . (int) $currency_in_no * 0.013; 
+					}
+					if($currency == 'Indian Rupees') {
+						$price = '&#8377;' . (int) $currency_in_no;
+					}
+					if($currency == 'UK Pound Sterling') {
+						$price = '&#163;' . (int) $currency_in_no * 0.010;
+					}
+				}
+
+				$content .= '<div>';
+				$content .= '<h3 style="text-align:center">' . get_the_title() . '</h3>';
+				$content .= '<table>';
+				$content .=	'<tbody>';
+				$content .=	'<tr>';
+				$content .=	"<td><p>Price: " . $price . "</p></td>";
+				$content .=	"<td><p>Publisher: " . $book_metadata['publisher'][0] . "</p></td>";
+				$content .= "</tr>";
+				$content .=	"<tr>";
+				$content .= "<td><p>Year: " . $book_metadata['year'][0] . "</p></td>";
+				$content .= "<td><p>Edition: " . $book_metadata['edition'][0] . "</p></td>";
+				$content .= "</tr>";
+				$content .=	"<tr>";
+				$content .= '<td colspan="2"><p style="text-align:center">For more information: <a href="'. $book_metadata['url'][0] .'" target="_blank">' . $book_metadata['url'][0] . '</p></td>';
+				$content .= "</tr>";
+				$content .= "</tbody>";
+				$content .= "</table>";
+				$content .= "</div>";
 			}
 		} else {
 			$content .= "<p>No Book Found....</p>";

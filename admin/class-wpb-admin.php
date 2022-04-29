@@ -363,27 +363,51 @@ class Wpb_Admin {
 		ob_start();
 		?>
 		<div class="wrap">
+		<?php
+		if( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] == true )
+		{
+		?>
+			<div class="notice notice-success"><p>Settings Saved Successfully</p></div>
+		<?php
+		}
+		?>
 			<h2>Book Settings</h2>
 			<p>Manages all the settings of book plugin</p>
 
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th scope="row"><label for="currency">Currency</label></th>
-						<td><input type="text" class="regular-text" name="currency" id="currency" placeholder="Currency"></td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="no_of_books">No. of Books (per page)</label></th>
-						<td><input type="text" class="regular-text" name="no_of_books" id="no_of_books" placeholder="No. of Books"></td>
-					</tr>
-					<tr>
-						<td><button class="button-primary">Save Settings</button></td>
-					</tr>
-				</tbody>
-			</table>
+			<form method="post" action="options.php">
+				<?php settings_fields( 'book_settings_group' ) ?>
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th scope="row"><label for="book_currency">Currency</label></th>
+							<?php $currency_option = get_option( 'book_currency' )?>
+							<td>
+								<select name="book_currency" id="book_currency" class="regular-text">
+									<option value="Indian Rupees" <?php selected( $currency_option, 'Indian Rupees' ); ?> >Indian Rupees</option>
+									<option value="US Dollar" <?php selected( $currency_option, 'US Dollar' ); ?> >US Dollar</option>
+									<option value="UK Pound Sterling" <?php selected( $currency_option, 'UK Pound Sterling' ); ?> >UK Pound Sterling</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="book_no_pages">No. of Books (per page)</label></th>
+							<td><input type="text" class="regular-text" name="book_no_pages" id="book_no_pages" placeholder="No. of Books" value="<?php echo get_option( 'book_no_pages' )?>"></td>
+						</tr>
+						<tr>
+							<td><input type="submit" value="Save Settings" class="button-primary"></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
 		</div>
 		<?php
 		echo ob_get_clean();
+	}
+
+	// Registers the settings group for each input field
+	public function register_book_settings() {
+		register_setting( 'book_settings_group', 'book_currency' );
+		register_setting( 'book_settings_group', 'book_no_pages' );
 	}
 
 	/**
