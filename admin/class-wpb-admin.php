@@ -351,6 +351,13 @@ class Wpb_Admin {
 		update_metadata( 'book', $post_id, 'edition', $edition );
 		update_metadata( 'book', $post_id, 'url', $url );
 
+		update_metadata( 'post', $post_id, 'author_name', $author );
+		update_metadata( 'post', $post_id, 'price', $price );
+		update_metadata( 'post', $post_id, 'publisher', $publisher );
+		update_metadata( 'post', $post_id, 'year', $year );
+		update_metadata( 'post', $post_id, 'edition', $edition );
+		update_metadata( 'post', $post_id, 'url', $url );
+
 	}
 
 	// create menu method

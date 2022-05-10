@@ -118,6 +118,7 @@ class Wpb_Public {
 				'category'    => '',
 				'edition'     => '',
 				'url'    	  => '',
+				'price'		  => '',
 			),
 			$atts
 		);
@@ -146,7 +147,7 @@ class Wpb_Public {
 					],
 				],
 			];
-		} else if ($attributes['author_name'] != "" || $attributes["publisher"] != "" || $attributes["year"] != "" || $attributes["edition"] != "" || $attributes["url"] != "") {
+		} else if ($attributes['author_name'] != "" || $attributes["publisher"] != "" || $attributes["year"] != "" || $attributes["edition"] != "" || $attributes["url"] != "" || $attributes["price"] != "") {
 			$args = [
 				'p'				=> $attributes['id'],
 				'post_type'      => 'book',
@@ -177,6 +178,11 @@ class Wpb_Public {
 					[
 						'key'     => 'url',
 						'value'   => explode(',', $attributes['url']),
+						'compare' => 'IN',
+					],
+					[
+						'key'     => 'price',
+						'value'   => explode(',', $attributes['price']),
 						'compare' => 'IN',
 					],
 				),
@@ -221,6 +227,9 @@ class Wpb_Public {
 				$content .= '<h3 style="text-align:center">' . get_the_title() . '</h3>';
 				$content .= '<table>';
 				$content .=	'<tbody>';
+				$content .=	'<tr>';
+				$content .=	'<td colspan="2"><p>Author: ' . $book_metadata['author_name'][0] . '</p></td>';
+				$content .= "</tr>";
 				$content .=	'<tr>';
 				$content .=	"<td><p>Price: " . $price . "</p></td>";
 				$content .=	"<td><p>Publisher: " . $book_metadata['publisher'][0] . "</p></td>";
